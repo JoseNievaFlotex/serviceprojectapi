@@ -18,7 +18,7 @@ import { DATABASE, HOST, PASSWORD, USERNAME } from './config/constants';
         database: config.get(DATABASE),
         entities: [__dirname + './**/**/*entity{.ts,.js}'],
         autoLoadEntities: true,
-        synchronize: true,
+        synchronize: false,
         logging: true,
         trustServerCertificate: true,
         logger: 'file',
