@@ -3,24 +3,38 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
-import { TypeOrmModule} from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { DATABASE, HOST, PASSWORD, USERNAME } from './config/constants';
 
 @Module({
-  imports: [TypeOrmModule.forRoot({
-    type: 'mssql',
-    host: '172.16.1.206',
-    username: 'RETAILUSER',
-    password: 'retail',
-    database: 'DBFLOTEX2022',
-    autoLoadEntities: true,
-    synchronize: true,
-    options: {
-      encrypt:false,
-      cryptoCredentialsDetails: {
-        minVersion: 'TLSv1'
-      }
-    },
-  }),
+  imports: [
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        type: 'mssql',
+        host: config.get(HOST),
+        username: 'RETAILUSER',
+        password: config.get(PASSWORD),
+        database: config.get(DATABASE),
+        entities: [__dirname + './**/**/*entity{.ts,.js}'],
+        autoLoadEntities: true,
+        synchronize: true,
+        logging: true,
+        trustServerCertificate: true,
+        logger: 'file',
+        options: {
+          encrypt: false,
+          
+          cryptoCredentialsDetails: {
+            minVersion: 'TLSv1',
+          },
+        },
+      }),
+    }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
     UserModule,
   ],
   controllers: [AppController],

@@ -28,12 +28,14 @@ export class UserController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
+    const data = await this.userService.update(id, updateUserDto);
+   return {message: 'Usuario Actualizado', data};
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  async remove(@Param('id') id: number) {
+    const data = await this.userService.remove(id);
+    return {message: 'Usuario Eliminado', data};
   }
 }

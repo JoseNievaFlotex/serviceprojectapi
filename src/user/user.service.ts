@@ -33,17 +33,21 @@ export class UserService {
   }
 
    async findOne(id: number) {
-    const user = await this.usersRepository.findBy({id});
+    const user = await this.usersRepository.findOne({where : {id}});
     if(!user)
     throw new NotFoundException('El usuario no existe');
     return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const user = await this.findOne(id);
+    const editUser = Object.assign(user, {...updateUserDto})
+    return await this.usersRepository.save(editUser);
+    
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  
+  async remove(id: number) {
+   const user = await this.findOne(id);
+   return await this.usersRepository.remove(user);
   }
 }

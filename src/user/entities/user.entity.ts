@@ -28,6 +28,7 @@ export class User {
 
   @BeforeInsert()
   @BeforeUpdate()
+  
   async hashPassword() {
     if (!this.password) {
       return;
